@@ -1,12 +1,19 @@
 <template>
+  
   <div id="app">
-    {{msg}}
+    <sidebar> </sidebar>
+    <map-view> </map-view>
+    
   </div>
 </template>
 
 <script>
+import Sidebar from './Sidebar.vue'
+import MapView from './MapView.vue'
+
 export default {
-  name: 'app',
+  components:{'sidebar':Sidebar,'map-view':MapView},
+  name: 'App',
   data () {
     return {
       msg: 'Welcome to Your Vue.js App'
@@ -22,7 +29,8 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+
+  height: 100%;
 }
 
 h1, h2 {
@@ -42,4 +50,8 @@ li {
 a {
   color: #42b983;
 }
+body, html{ // needed to make the main view full height
+        height: 100%;
+        margin: 0px;
+    }
 </style>

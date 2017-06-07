@@ -1,93 +1,98 @@
 <template>
-   <div id="map">
-      
-   </div>
+<l-map :zoom="zoom" :center="center" :attributionControl="false" >
+    <l-tilelayer :url="url" :attribution="attribution"></l-tilelayer>
+    <marker-popup v-for="point in pointsArray" :position="point.latlng" :title="point.name" > </marker-popup>
+    <marker-popup :position="center" title="Hello" > </marker-popup>
+  </l-map>
 </template>
 
 <script>
     import {
         State
     } from './state.js'
+    import MarkerPopup from './MarkerPopup.vue'
     export default {
 
         name: 'MapView',
-
+        components: {   
+            'marker-popup': MarkerPopup
+        },
         data() {
+
             return {
-                L: require('leaflet'),
                 center: [39.833, -98.58333], // https://goo.gl/XBu1SF USA USA USA   
                 zoom: 4.5,
-                points: {
+                pointsDictionary: {
                     0: {
                         name: "Vanderbilt University",
                         latlng: [36.14695, -86.803819]
-        
-                    
-
                     }
                 },
-                map: null
+                pointsArray:[],
+                url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+                attribution: 'vue-leaflet' // change to OSM
 
             }
+        },
+        computed: {
+            
         },
         created: function() {
             State.$on("geocode", (data) => {
                 this.addPoint(data);
             })
         },
-        mounted: function() {
-            this.map = this.L.map('map').setView(this.center, this.zoom);
-            this.L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(this.map);
-
-            this.plotPoints(); // for dev
-        },
-        watch: {
-            zoom: function() {
-                this.map.setView(this.center, this.zoom);
-            },
-            center: function() {
-                this.map.setView(this.center, this.zoom); // check this
-            }
-
-        },
         methods: {
-            plotPoints: function() { // may have performance problems later
 
-                var _points = this.points;
-                var _plotPoint = this.plotPoint;
-
-                Object.keys(this.points).forEach(function(val, index, array) {
-                    var value = _points[val];
-                    _plotPoint(value,val);
-                });
-            },
             addPoint: function(data) {
-                this.points[data.uid] = {};
 
-                this.points[data.uid]['name'] = data.name;
-                this.points[data.uid]['latlng'] = data.latlng;
+                let alreadyExists = false;
+                if(this.pointsDictionary[data.uid]!=undefined){
+                    alreadyExists = true;
+                }
+                this.pointsDictionary[data.uid] = {};
+                
+            
+                this.$set(this.pointsDictionary,data.uid,{
+                    'name': data.name,
+                    'latlng': data.latlng,
+                    'uid': data.uid
+                });
+            //    this.pointsDictionary[data.uid]['name'] = data.name;
+              //  this.pointsDictionary[data.uid]['latlng'] = data.latlng;
 
-              //  this.points[data.uid]["marker"] = null;
-                this.plotPoint(data,data.uid);
+                //  this.points[data.uid]["marker"] = null;
+                if(alreadyExists){
+                    console.log("exists");
+                    var index = this.pointsArray.find(function(point){
+                        return point.uid == data.uid;
+                    });
+                    //this.$set(this.pointsArray,index,this.pointsDictionary[data.uid]);
+                    this.pointsArray.splice(index,1,this.pointsDictionary[data.uid]);
+                }
+                else {
+                      this.pointsArray.push(this.pointsDictionary[data.uid]);
+                }
+              
+
+                console.log(JSON.stringify(this.pointsDictionary));
+                console.log(JSON.stringify(this.pointsArray2()));
+
 
 
             },
-            plotPoint: function(value,uid) {
-                console.log(JSON.stringify(this.points[uid]) + " hello");
-                if(this.points[uid]["marker"]!=undefined){
-             //       console.log(this.points);
-                    console.log(uid);
-                    this.map.removeLayer(this.points[uid]["marker"]);
-                }
-                                
-                var marker = this.L.marker(value.latlng);
-                marker.bindPopup("<b>" + value.name + "</b><br>" + value.latlng[0] + ", " + value.latlng[1]);
-                this.points[uid]['marker'] = marker;
-                console.log(marker);
-                marker.addTo(this.map);
+            pointsArray2: function() {
+                //console.log(this.pointsDictionary);
+                let _pointsDictionary = this.pointsDictionary;
+                var keys = Object.keys(_pointsDictionary);
+
+                var values = keys.map(function(v) {
+                    return _pointsDictionary[v];
+                });
+                
+                return values;
             }
+
         }
     }
 </script>

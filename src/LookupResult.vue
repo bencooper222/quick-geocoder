@@ -2,15 +2,18 @@
 
 		<tr>
 			<td><input v-model="input"></td>
-			<td class="latlng">{{lat}}</td>
-			<td class="latlng">{{lng}}</td>
+			<td class="latlng" v-if="lat">{{lat}}</td>
+            <td class="latlng" v-else> <icon name="exclamation-triangle"></icon></td>
+			<td class="latlng" v-if="lng">{{lng}}</td>
+            <td class="latlng" v-else><icon name="exclamation-triangle"></icon></td>
 		</tr>
 
 </template>
 
 <script>
-
-    import {State} from './state.js';
+    import {
+        State
+    } from './state.js';
     export default {
         name: 'LookupResult',
         props: ['uid'],
@@ -19,6 +22,8 @@
                 input: null,
                 lat: null,
                 lng: null,
+                newest: true,
+                delay: 450
 
             }
         },
@@ -28,25 +33,24 @@
                 if (this.input == "") { // special case
                     this.lat = "";
                     this.lng = "";
+                } else {
+                    if (this.newest) {
+
+                        State.$emit('full', this.uid)
+                    }
+
+                    this.newest = false
                 }
 
                 var _this = this;
+
                 this.geocode(this.input, function(data) {
 
-                    data = JSON.parse(data);
-                    _this.lat = _this.precisionRounding(data[0].lat, 2);
-                    _this.lng = _this.precisionRounding(data[0].lon, 2); // OSM is wrong
-
-
-                    var emit = {
-                        name: _this.input,
-                        latlng: [_this.lat, _this.lng],
-                        uid: _this.uid
-                    };
-
-                    State.$emit('geocode', emit);
+                    _this.handleGeocode(data, true);
 
                 });
+
+
 
 
             }
@@ -65,7 +69,7 @@
                         }
                     };
                     xobj.send(null);
-                }, 310);
+                }, this.delay);
 
 
             },
@@ -75,6 +79,49 @@
                 var roundedTempNumber = Math.round(tempNumber);
                 return roundedTempNumber / factor;
             },
+            handleGeocode: function(data, tryAgain) {
+                data = JSON.parse(data);
+                console.log(data);
+
+                if (data.length == 0) { // if no results
+
+                    if (tryAgain) {
+                        let _handleGeocode = this.handleGeocode;
+                        this.geocode(this.input, function(data) {
+
+                            _handleGeocode(data, false);
+
+                        });
+                    } else {
+
+
+                        let emit = {
+                            name: false,
+                            latlng: [false, false],
+                            uid: this.uid
+                        }
+
+                        State.$emit('geocode', emit);
+
+                        this.lat = false;
+                        this.lng = false;
+
+                        return;
+                    }
+                }
+
+                this.lat = this.precisionRounding(data[0].lat, 2);
+                this.lng = this.precisionRounding(data[0].lon, 2); // OSM is wrong
+
+
+                let emit = {
+                    name: this.input,
+                    latlng: [this.lat, this.lng],
+                    uid: this.uid
+                };
+
+                State.$emit('geocode', emit);
+            }
 
         }
     }

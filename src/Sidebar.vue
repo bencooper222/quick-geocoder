@@ -8,7 +8,7 @@
                   <td>Latitude</td>
                   <td>Longitude</td>
                   </tr>
-      <lookup-result uid="1"> </lookup-result>
+      <lookup-result v-for="input in inputs" :uid="input" :key="input"> </lookup-result>
           </tbody>
           </table>
    </div>
@@ -16,16 +16,30 @@
 
 <script>
     import LookupResult from './LookupResult.vue'
+      import {
+        State
+    } from './state.js';
  
     export default {
         components: {
             'lookup-result': LookupResult
         },
         name: 'Sidebar',
+        created: function(){
+            let _inputs = this.inputs
+             State.$on("full", (data) => {
+                 console.log("full");
+                 console.log(data);
+                if(_inputs[_inputs.length-1]==data){
+                    _inputs.push(data+1);
+                }
+                
+            })
+        },
         data() {
             return {
                 title: "Quick Geocoder",
-                compiledPoints: []
+                inputs: [0]
             }
         }
     }
@@ -34,7 +48,7 @@
 <style lang="scss">
     #sidebar {
         float: left;
-        width: 25%;
+        width: 30%;
         background-color: white;
         height: 100%;
         position: fixed;

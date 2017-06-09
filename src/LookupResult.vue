@@ -58,7 +58,7 @@
         methods: {
             geocode: function(input, callback) {
                 setTimeout(function() { // set the delay so we're not over RESTful requesting
-                    var url = "http://nominatim.openstreetmap.org/search?q=" + input + "&format=json";
+                    var url = "https://nominatim.openstreetmap.org/search?q=" + input + "&format=json";
                     var xobj = new XMLHttpRequest();
                     xobj.overrideMimeType("application/json");
                     xobj.open('GET', url, true); // Replace 'my_data' with the path to your file

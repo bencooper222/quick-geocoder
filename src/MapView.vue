@@ -31,7 +31,7 @@
 
                 },
 
-                url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+                url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                 attribution: 'vue-leaflet' // change to OSM
 
             }

@@ -5,8 +5,8 @@
           <tbody>
               <tr>
                   <td>Location</td>
-                  <td>Latitude</td>
-                  <td>Longitude</td>
+                  <td>&nbsp;&nbsp;Latitude&nbsp;&nbsp;</td>
+                  <td >Longitude</td>
                   </tr>
       <lookup-result v-for="input in inputs" :uid="input" :key="input"> </lookup-result>
           </tbody>
@@ -55,7 +55,8 @@
     }
     
     #locations {
-        width: 90%;
+        width: 91%;
         text-align: center;
+        
     }
 </style>

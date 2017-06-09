@@ -1,14 +1,14 @@
 <template>
 
 		<tr>
-			<td><input v-model="input"></td>
-         
+			<td><input id="input" v-model="input"></td>
+            
 			<td class="latlng" v-if="lat">{{lat}}</td>
             <td class="latlng" v-else> <icon name="exclamation-triangle"></icon></td>
 			<td class="latlng" v-if="lng" >{{lng}}</td>
             <td class="latlng" v-else><icon name="exclamation-triangle"></icon></td>
-            <td v-if="lat"><button v-clipboard="latlngPair"><icon name="copy"></icon></button></td>
-            <td v-else ><button disabled><icon name="copy"></icon></button> </td>
+            <td v-if="lat"><button v-clipboard="latlngPair" title="Copy latitude-longitude pair to clipboard"><icon name="copy"></icon></button></td>
+            <td v-else ><button disabled title="Type a location before copying"><icon name="copy"></icon></button> </td>
             
 		</tr>
 
@@ -144,11 +144,12 @@
 <style lang="scss">
     #input {
         float: left;
+        width: 95%;
     }
     
     .latlng {
         background-color: grey;
-        width: 22.5%;
+        width: 15%;
     }
     
     

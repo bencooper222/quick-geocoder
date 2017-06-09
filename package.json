@@ -12,6 +12,7 @@
     "leaflet": "^1.0.3",
     "vue": "^2.3.3",
     "vue-awesome": "^2.3.1",
+    "vue-clipboards": "^1.0.0",
     "vue2-leaflet": "^0.0.50"
   },
   "devDependencies": {

@@ -2,10 +2,14 @@
 
 		<tr>
 			<td><input v-model="input"></td>
+         
 			<td class="latlng" v-if="lat">{{lat}}</td>
             <td class="latlng" v-else> <icon name="exclamation-triangle"></icon></td>
-			<td class="latlng" v-if="lng">{{lng}}</td>
+			<td class="latlng" v-if="lng" >{{lng}}</td>
             <td class="latlng" v-else><icon name="exclamation-triangle"></icon></td>
+            <td v-if="lat"><button v-clipboard="latlngPair"><icon name="copy"></icon></button></td>
+            <td v-else ><button disabled><icon name="copy"></icon></button> </td>
+            
 		</tr>
 
 </template>
@@ -26,6 +30,12 @@
                 delay: 450
 
             }
+        },
+        computed: {
+            latlngPair: function(){
+                return this.lat +", " + this.lng;
+            }
+            
         },
         watch: {
             input: function() {
@@ -121,6 +131,10 @@
                 };
 
                 State.$emit('geocode', emit);
+            },
+
+            toClipboard: function(){
+
             }
 
         }
@@ -136,4 +150,7 @@
         background-color: grey;
         width: 22.5%;
     }
+    
+    
+   
 </style>

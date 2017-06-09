@@ -131,10 +131,6 @@
                 };
 
                 State.$emit('geocode', emit);
-            },
-
-            toClipboard: function(){
-
             }
 
         }

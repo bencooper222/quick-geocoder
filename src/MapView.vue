@@ -39,7 +39,7 @@
 
         created: function() {
             State.$on("geocode", (data) => {
-                console.log(data);
+              //  console.log(data);
                 this.addPoint(data);
                 
             })

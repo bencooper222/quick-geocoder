@@ -8,7 +8,7 @@
                   <td>&nbsp;&nbsp;Latitude&nbsp;&nbsp;</td>
                   <td >Longitude</td>
                   </tr>
-      <lookup-result v-for="input in inputs" :uid="input" :key="input"> </lookup-result>
+      <lookup-result v-for="input in inputs" :uid="input" :key="input" :total="totalInputs"> </lookup-result>
           </tbody>
           </table>
    </div>
@@ -28,18 +28,30 @@
         created: function(){
             let _inputs = this.inputs
              State.$on("full", (data) => {
-                 console.log("full");
-                 console.log(data);
+
                 if(_inputs[_inputs.length-1]==data){
                     _inputs.push(data+1);
                 }
                 
-            })
+            });
+
+             State.$on("spreadsheet", (data) => {
+
+                if(_inputs[_inputs.length-1]==data){
+                    _inputs.push(data+1);
+                }
+                
+            });
         },
         data() {
             return {
                 title: "Quick Geocoder",
                 inputs: [0]
+            }
+        },
+        computed: {
+            totalInputs: function(){
+                return this.inputs.length;
             }
         }
     }
